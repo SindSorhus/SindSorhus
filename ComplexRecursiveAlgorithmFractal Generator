@@ -1,0 +1,36 @@
+"```python
+import random
+
+def complex_recursive_algorithm(data, target, min_overlap, max_overlap):
+    if len(data) < target:
+        return None
+
+    overlaps = [0] * (target + 1)
+    overlaps[0] = 1
+    total = []
+    temp_data = list(data)
+
+    for _ in range(random.randint(min_overlap, max_overlap)):
+        index = random.randint(0, len(temp_data) - 1)
+        item = temp_data.pop(index)
+        for j in range(target - item[0], -1, -1):
+            if overlaps[j]:
+                overlaps[j + item[0]] += overlaps[j]
+
+        total.append(item)
+        if any(overlap >= min_overlap and overlap <= max_overlap for overlap in overlaps[target:]):
+            break
+    else:
+        return None
+
+    solutions = [tuple() for _ in range(target + 1)]
+    for item in total:
+        for j in range(target - item[0], -1, -1):
+            temp_solution = solutions[j] + (item,)
+            if overlaps[j+item[0]] <= max_overlap and temp_solution and len(temp_solution) < len(solutions[j + item[0]]):
+                solutions[j + item[0]] = temp_solution
+
+    result = []
+    for count, solution in enumerate(solutions[target:]):
+        if any(overlap >= min_overlap and overlap <= max_overlap for overlap in solution):
+            result.append("""
